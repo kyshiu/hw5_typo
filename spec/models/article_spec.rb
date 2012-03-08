@@ -21,6 +21,31 @@ describe Article do
     end
   end
 
+  describe "article merging" do
+    before(:each) do
+      @article1 = Article.new
+      @article1.id = 12345
+      @article1.user = Factory(:user, :name=>"bob")
+      @article1.body = "The first article "
+      @article1.comments = [Factory(:comment, :body=>"this is great")]
+      @article2 = Article.new
+      @article2.id = 23456
+      @article2.user = Factory(:user, :name=>"sally")
+      @article2.body = "The second article "
+      @article2.comments = [Factory(:comment, :body=>"this is also great")]
+    end
+
+    it "should have both articles contents when merged" do
+      article3 = @article1.merge_with(@article2.id)
+      article3.body.should be(@article1.body + @article2.body)
+    end
+
+    it "should have one author when merged" do
+      article3 = @article1.merge_with(@article2.id)
+      article3.user.should be(@article1.user)
+    end
+  end
+
   it "test_content_fields" do
     a = Article.new
     assert_equal [:body, :extended], a.content_fields
@@ -545,7 +570,7 @@ describe Article do
     describe "#find_by_permalink" do
       it "uses UTC to determine correct day" do
         @a.save
-        a = Article.find_by_permalink :year => 2011, :month => 2, :day => 21, :permalink => 'a-big-article' 
+        a = Article.find_by_permalink :year => 2011, :month => 2, :day => 21, :permalink => 'a-big-article'
         a.should == @a
       end
     end
@@ -566,7 +591,7 @@ describe Article do
     describe "#find_by_permalink" do
       it "uses UTC to determine correct day" do
         @a.save
-        a = Article.find_by_permalink :year => 2011, :month => 2, :day => 22, :permalink => 'a-big-article' 
+        a = Article.find_by_permalink :year => 2011, :month => 2, :day => 22, :permalink => 'a-big-article'
         a.should == @a
       end
     end
