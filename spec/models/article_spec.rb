@@ -44,6 +44,11 @@ describe Article do
       article3 = @article1.merge_with(@article2.id)
       article3.user.should be(@article1.user)
     end
+
+    it "the comments of both articles should point to the new one" do
+      article3 = @article1.merge_with(@article2.id)
+      article3.comments.sort.should be([@article1.comments[0], @article2.comments[0]].sort)
+    end
   end
 
   it "test_content_fields" do
