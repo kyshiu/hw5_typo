@@ -67,41 +67,6 @@ describe Admin::PagesController do
     assert_equal "Page was successfully created.", flash[:notice]
   end
 
-  describe "test_edit" do
-    before(:each) do
-      @page = Factory(:page)
-      @article1 = Article.new
-      @article1.id = 12345
-      @article1.user = Factory(:user, :name=>"bob")
-      @article1.body = "The first article "
-      @article1.comments = [Factory(:comment, :body=>"this is great")]
-      @article2 = Article.new
-      @article2.id = 23456
-      @article2.user = Factory(:user, :name=>"sally")
-      @article2.body = "The second article "
-      @article1.comments = [Factory(:comment, :body=>"this is also great")]
-      get :edit, :id => @page.id
-    end
-
-    it 'should render edit template' do
-      assert_response :success
-      assert_template "edit"
-      assert_not_nil assigns(:page)
-      assert_equal @page, assigns(:page)
-    end
-
-    it 'should render merge article partial' do
-      should render_template(:partial => '_mergepartial')
-    end
-
-
-=begin    it 'should redirect to article page once merged and should have contents of both articles' do
-      Article.stub(:merge_with).and_return(mock('Article')
-      assert_response :redirect, :action => "show", :id => new_page.id
-    end
-=end
-
-  end
 
   it 'test_update' do
     page = Factory(:page)

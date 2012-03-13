@@ -23,16 +23,18 @@ describe Article do
 
   describe "article merging" do
     before(:each) do
-      @article1 = Article.new
-      @article1.id = 12345
+      @article1 = Article.create
+      @article1.id = 1234
       @article1.user = Factory(:user, :name=>"bob")
       @article1.body = "The first article "
       @article1.comments = [Factory(:comment, :body=>"this is great")]
-      @article2 = Article.new
-      @article2.id = 23456
+      @article1.save
+      @article2 = Article.create
+      @article2.id = 2345
       @article2.user = Factory(:user, :name=>"sally")
       @article2.body = "The second article "
       @article2.comments = [Factory(:comment, :body=>"this is also great")]
+      @article2.save
     end
 
     it "should have both articles contents when merged" do

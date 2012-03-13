@@ -48,7 +48,7 @@ describe Admin::ContentController do
       response.should render_template('index')
       response.should be_success
     end
-    
+
     it 'should restrict to withdrawn articles' do
       article = Factory(:article, :state => 'withdrawn', :published_at => '2010-01-01')
       get :index, :search => {:state => 'withdrawn'}
@@ -56,7 +56,7 @@ describe Admin::ContentController do
       response.should render_template('index')
       response.should be_success
     end
-  
+
     it 'should restrict to withdrawn articles' do
       article = Factory(:article, :state => 'withdrawn', :published_at => '2010-01-01')
       get :index, :search => {:state => 'withdrawn'}
@@ -545,6 +545,38 @@ describe Admin::ContentController do
         Article.should_not be_exists({:id => draft_2.id})
       end
     end
+
+      describe "test_merge" do
+    before(:each) do
+      @page = Factory(:page)
+      @article1 = Article.new
+      @article1.id = 12345
+      @article1.user = Factory(:user, :name=>"bob")
+      @article1.body = "The first article "
+      @article1.comments = [Factory(:comment, :body=>"this is great")]
+      @article1.save
+      @article2 = Article.new
+      @article2.id = 23456
+      @article2.user = Factory(:user, :name=>"sally")
+      @article2.body = "The second article "
+      @article2.comments = [Factory(:comment, :body=>"this is also great")]
+      @article2.save
+      get :edit, :id => @page.id
+    end
+
+    it 'should render edit template' do
+      assert_response :success
+      assert_template "edit"
+      assert_not_nil assigns(:page)
+      assert_equal @page, assigns(:page)
+    end
+
+    it 'should render merge article partial' do
+      should render_template(:partial => '_mergepartial')
+    end
+
+  end
+
 
     describe 'resource_add action' do
 
