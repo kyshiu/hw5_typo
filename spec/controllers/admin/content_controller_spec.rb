@@ -469,7 +469,7 @@ describe Admin::ContentController do
       Factory(:blog)
       #TODO delete this after remove fixture
       Profile.delete_all
-      @user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_admin, :label => Profile::ADMIN))
+      @user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_admin, :label => Profile::ADMIN) )
       @user.editor = 'simple'
       @user.save
       @article = Factory(:article)
@@ -545,38 +545,6 @@ describe Admin::ContentController do
         Article.should_not be_exists({:id => draft_2.id})
       end
     end
-
-      describe "test_merge" do
-    before(:each) do
-      @page = Factory(:page)
-      @article1 = Article.new
-      @article1.id = 12345
-      @article1.user = Factory(:user, :name=>"bob")
-      @article1.body = "The first article "
-      @article1.comments = [Factory(:comment, :body=>"this is great")]
-      @article1.save
-      @article2 = Article.new
-      @article2.id = 23456
-      @article2.user = Factory(:user, :name=>"sally")
-      @article2.body = "The second article "
-      @article2.comments = [Factory(:comment, :body=>"this is also great")]
-      @article2.save
-      get :edit, :id => @page.id
-    end
-
-    it 'should render edit template' do
-      assert_response :success
-      assert_template "edit"
-      assert_not_nil assigns(:page)
-      assert_equal @page, assigns(:page)
-    end
-
-    it 'should render merge article partial' do
-      should render_template(:partial => '_mergepartial')
-    end
-
-  end
-
 
     describe 'resource_add action' do
 
@@ -701,6 +669,24 @@ describe Admin::ContentController do
         end.should_not change(Article, :count)
       end
 
+    end
+  end
+
+  describe "test_merge" do
+    before(:each) do
+      Factory(:blog)
+      @page = Factory(:page)
+      @comment1 = "hello"
+      @comment2 = "good bye"
+      @body1 = "the first article"
+      @body2 = "the second article"
+      @article1 = Factory(:article, :id=>1234, :user=>Factory(:user, :name=>"bob"), :body=>@body1, :comments => [Factory(:comment, :body=>@comment1)])
+      @article2 = Factory(:article, :id=>2345, :user=>Factory(:user, :name=>"sally"), :body=>@body2, :comments => [Factory(:comment, :body=>@comment2)])
+      get :edit, :id => @page.id
+    end
+
+    it 'should not render merge article partial when not admin' do
+      should_not render_template(:partial => '_mergepartial')
     end
   end
 end

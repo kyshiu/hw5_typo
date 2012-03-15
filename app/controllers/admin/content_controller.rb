@@ -29,6 +29,14 @@ class Admin::ContentController < Admin::BaseController
 
   def edit
     @article = Article.find(params[:id])
+    if session[:user_id]
+
+      user = User.find(session[:user_id])
+      if user
+        @isadmin = user.profile_id == 1
+      end
+    end
+
     unless @article.access_by? current_user
       redirect_to :action => 'index'
       flash[:error] = _("Error, you are not allowed to perform this action")
@@ -38,8 +46,20 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def merge
-    article = Article.find(params[:merge_id])
-    article.merge_with(params[:article_id][0])
+    begin
+      article = Article.find(params[:merge_id])
+      other_article = Article.find(params[:article_id][0])
+    rescue ActiveRecord::RecordNotFound
+      other_article = nil
+    rescue Exception=>e
+      other_article = nil
+    end
+    if other_article
+      article.merge_with(other_article.id)
+      flash[:notice] = _("Article successfully merged")
+    else
+      flash[:error] = _("Error, no such article for id = #{params[:article_id][0]}")
+    end
     redirect_to :action => 'index'
   end
 

@@ -4,4 +4,6 @@
   <%= render :partial => "form" %>
 
 <% end %>
-<%= render :partial => "mergepartial" %>
+<% if @isadmin %>
+  <%= render :partial => "mergepartial" %>
+<% end %>
